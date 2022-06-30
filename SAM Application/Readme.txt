@@ -14,4 +14,5 @@ Commmands:
 - command to delete stack : sam delete --stack-name (stack name will be asked if not put in command)
   https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-delete.html
   
-  
+Using named profiles : https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+- command : export AWS_PROFILE=user1
