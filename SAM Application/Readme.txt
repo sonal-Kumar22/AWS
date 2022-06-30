@@ -16,3 +16,7 @@ Commmands:
   
 Using named profiles : https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 - command : export AWS_PROFILE=user1
+
+Error encounteres:
+- https://stackoverflow.com/questions/68463393/cloudformation-template-using-existing-iam-role-in-for-lambda-functions
+- Template error: instance of Fn::GetAtt references undefined resource HelloWorldFunctionRole
