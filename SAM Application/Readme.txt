@@ -20,3 +20,6 @@ Using named profiles : https://docs.aws.amazon.com/cli/latest/userguide/cli-conf
 Error encounteres:
 - https://stackoverflow.com/questions/68463393/cloudformation-template-using-existing-iam-role-in-for-lambda-functions
 - Template error: instance of Fn::GetAtt references undefined resource HelloWorldFunctionRole
+
+Difference between SAM template and Cloudformation template :
+- https://stackoverflow.com/questions/50140885/difference-between-sam-template-and-cloudformation-template
