@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo installing packages...
+      - yarn install  
+  build:
+    commands:
+      - echo "REACT_APP_OKTA_ISSUER=$REACT_APP_OKTA_ISSUER" >> .env.development
+      - echo "REACT_APP_OKTA_CLIENTID=$REACT_APP_OKTA_CLIENTID" >> .env.development
+      - echo "REACT_APP_OKTA_REDIRECTURI=$REACT_APP_OKTA_REDIRECTURI" >> .env.development
+      - echo "REACT_APP_TOKEN=$REACT_APP_TOKEN" >> .env.development
+      - echo "REACT_APP_BASE_URL=$REACT_APP_BASE_URL" >> .env.development
+      - echo "REACT_APP_OKTA_API_KEY=$REACT_APP_OKTA_API_KEY" >> .env.development
+      - yarn run build:dev
+  post_build:
+    commands:
+      - aws s3 cp build/ s3://$S3_BUCKET/ --recursive
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+artifacts:
+  files:
+    - '**/*' 
