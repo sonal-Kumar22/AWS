@@ -1,0 +1,32 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Installing packages for lambdas in build phase
+  build:
+      commands:
+        - echo installing requirements for lambdas
+        - cd layers
+        - mkdir python
+        - pip3 install --target python -r requirements.txt
+        - cp -r common_layer/ python/
+        - zip -r python.zip python/
+        - mv python.zip ../
+        - cd ..
+  post_build:
+    commands:
+      - echo Creating lambda layer
+      - aws lambda publish-layer-version --layer-name rbac-webapp-layer --description "My Python layer" --compatible-runtimes python3.9 --zip-file fileb://python.zip  #create layer
+      - echo Fetching latest lamba layer version
+      - aws lambda list-layer-versions --layer-name rbac-webapp-layer --query "LayerVersions[0].LayerVersionArn" --output text
+      - echo Storing latest lambda layer arn in a variable
+      - API_ID=$(aws lambda list-layer-versions --layer-name rbac-webapp-layer --query "LayerVersions[0].LayerVersionArn" --output text) #get latest layer version
+      - echo Attaching lambda layer to the lambdas
+      - aws lambda update-function-configuration --function-name rbac-webapp-common-api-lambda --layers $API_ID #update layer to lambda
+      - aws lambda update-function-configuration --function-name rbac-webapp-auditor-api-lambda --layers $API_ID
+      - aws lambda update-function-configuration --function-name rbac-webapp-approver-api-lambda --layers $API_ID
+      - aws lambda update-function-configuration --function-name rbac-webapp-owner-api-lambda --layers $API_ID
+      - aws lambda update-function-configuration --function-name rbac-webapp-admin-api-lambda --layers $API_ID
+artifacts:
+  files:
+    - '**/*'
