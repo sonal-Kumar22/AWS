@@ -1,0 +1,60 @@
+version: 0.2
+
+env:
+  variables:
+    Lambda_Layer_Version: "arn:aws:lambda:us-east-1:280838142177:layer:rbac-webapp-layer:27"
+
+
+phases:
+  pre_build:
+    commands:
+      - echo Installing packages for lambdas...
+  build:
+      commands:
+        - cd admin_service
+        - zip -r admin_services.zip . #zip all contents inside admin_services folder
+        - mv admin_services.zip ../
+        - cd ..
+        #- pip3 install --target approver_service -r approver_service/requirements.txt
+        - cd approver_service
+        - zip -r approver_service.zip .
+        - mv approver_service.zip ../
+        - cd ..
+        #- pip3 install --target auditor_service -r auditor_service/requirements.txt
+        - cd auditor_service
+        - zip -r auditor_service.zip .
+        - mv auditor_service.zip ../
+        - cd ..
+        #- pip3 install --target business_owner_service -r business_owner_service/requirements.txt
+        - cd business_owner_service
+        - zip -r business_owner_service.zip .
+        - mv business_owner_service.zip ../
+        - cd ..
+        #- pip3 install --target common_service -r common_service/requirements.txt
+        - cd common_service
+        - zip -r common_service.zip .
+        - mv common_service.zip ../
+        - cd ..
+        - pip3 install --target auth-service -r auth-service/requirements.txt
+        - cd auth-service #move into auth-service folder
+        - ls
+        - zip -r auth-service.zip . #compress contents of auth-service folder
+        - mv auth-service.zip ../ #move zip file into parent directory i.e outside of auth-service folder
+        - cd ..
+  post_build:
+    commands:
+      - echo updating lambdas...
+      - aws lambda update-function-code --function-name rbac-webapp-admin-api-lambda --zip-file fileb://admin_services.zip
+      - aws lambda update-function-code --function-name rbac-webapp-owner-api-lambda --zip-file fileb://business_owner_service.zip
+      - aws lambda update-function-code --function-name rbac-webapp-approver-api-lambda --zip-file fileb://approver_service.zip 
+      - aws lambda update-function-code --function-name rbac-webapp-auditor-api-lambda --zip-file fileb://auditor_service.zip
+      - aws lambda update-function-code --function-name rbac-webapp-common-api-lambda --zip-file fileb://common_service.zip
+      - aws lambda update-function-code --function-name rbac-webapp-authorizer-lambda --zip-file fileb://auth-service.zip
+      - aws lambda update-function-configuration --function-name rbac-webapp-common-api-lambda --layers $Lambda_Layer_Version #update layer to lambda
+      - aws lambda update-function-configuration --function-name rbac-webapp-auditor-api-lambda --layers $Lambda_Layer_Version
+      - aws lambda update-function-configuration --function-name rbac-webapp-approver-api-lambda --layers $Lambda_Layer_Version
+      - aws lambda update-function-configuration --function-name rbac-webapp-owner-api-lambda --layers $Lambda_Layer_Version
+      - aws lambda update-function-configuration --function-name rbac-webapp-admin-api-lambda --layers $Lambda_Layer_Version
+artifacts:
+  files:
+    - '**/*'
