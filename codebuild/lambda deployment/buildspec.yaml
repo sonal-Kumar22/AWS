@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+  build:
+    commands:
+      - echo Build started on `date`
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - pip3 install --target . -r requirements.txt
+      - zip -r rbac.zip .
+      - aws s3api put-object --bucket dev-rbac-code-phase-one --key rbac.zip --body rbac.zip
+      - aws lambda update-function-code --function-name rbac-dev-feeder-phase-one --s3-bucket dev-rbac-code-phase-one --s3-key rbac.zip
+      - aws lambda update-function-code --function-name rbac-dev-reprovisioning-phase-one --s3-bucket dev-rbac-code-phase-one --s3-key rbac.zip
+      - aws lambda update-function-code --function-name rbac-dev-provisioning-phase-one --s3-bucket dev-rbac-code-phase-one --s3-key rbac.zip
+      - aws lambda update-function-code --function-name rbac-dev-hourly-cron-lambda-phase-one --s3-bucket dev-rbac-code-phase-one --s3-key rbac.zip
+      - rm -rf rbac.zip # no need for this line as codebuilds deletes it automatically after build completion
+artifacts:
+  files:
+    - '**/*'
