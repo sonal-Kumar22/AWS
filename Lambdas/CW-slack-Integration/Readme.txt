@@ -5,4 +5,6 @@ Articles:
 - https://enlear.academy/create-slack-notifications-for-aws-cloudwatch-alarms-918e7bfd2ba5
 - https://antonputra.com/amazon/send-aws-cloudwatch-alarms-to-slack/
   video link : https://www.youtube.com/watch?v=ox_HJ8w7FPI
+  
+Referred : https://antonputra.com/amazon/send-aws-cloudwatch-alarms-to-slack/
 
