@@ -1,4 +1,4 @@
-Integrate CW alarms to slack channel :
+Integrate CW alarms notifications to slack channel :
 
 Articles:
 - https://medium.com/analytics-vidhya/generate-slack-notifications-for-aws-cloudwatch-alarms-e46b68540133
